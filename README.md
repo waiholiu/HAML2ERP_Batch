@@ -7,7 +7,9 @@ It basically just calls https://haml2erb.org/ for every HAML file you have, save
 # How to use
 
 Compile the app by using dotnet run
+
 Go into bin/debug/dotnetcore3.1
+
 Run  .\HAML2ERP_Batch.exe <directory of the project you want to convert>
 
 
