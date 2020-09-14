@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HAML2ERP_Batch": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Users\\waiho\\OneDrive\\Source\\hackerspace3test"
+    }
+  }
+}
