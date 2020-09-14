@@ -11,18 +11,20 @@ namespace HAML2ERP_Batch
     {
 
         private static readonly HttpClient client = new HttpClient();
+        const string logfilepath = "log.txt";
 
         static void Main(string[] args)
         {
             var client = new RestClient("https://haml2erb.org/api/convert");
 
-            var path = args[0];
-            string[] files = System.IO.Directory.GetFiles(path, "*.haml", SearchOption.AllDirectories);
+            var workingDirectory = args[0];
+            log($"working directory is {workingDirectory}");
+
+            string[] files = System.IO.Directory.GetFiles(workingDirectory, "*.haml", SearchOption.AllDirectories);
 
             foreach(var hamlFile in files)
             {
-                Console.WriteLine($"Sending {hamlFile} to haml2erb service" );
-                //open the file up
+                log($"Sending {hamlFile} to haml2erb service" );
 
                 var haml = File.ReadAllText(hamlFile);
 
@@ -34,10 +36,11 @@ namespace HAML2ERP_Batch
 
                 IRestResponse response = client.Execute(request);
 
-                if(response.StatusCode == System.Net.HttpStatusCode.OK)
+                JObject json = JObject.Parse(response.Content);
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
 
-                    JObject json = JObject.Parse(response.Content);
+                    
                     var erb = json["erb"].ToString();
 
                     var hamlPath = Path.GetDirectoryName(hamlFile);
@@ -46,28 +49,40 @@ namespace HAML2ERP_Batch
 
                     if(File.Exists(erbFileName))
                     {
-                        Console.WriteLine($"{erbFileName} exists already. Skip over");
+                        log($"{erbFileName} exists already. Skip over");
                     }
                     else
                     {
-                        Console.WriteLine($"writing erb file to {erbFileName}");
+                        log($"writing erb file to {erbFileName}");
                         File.WriteAllText(erbFileName, erb);
 
-                        Console.WriteLine($"deleting old haml file to {hamlPath}");
+                        log($"deleting old haml file to {hamlPath}");
                         File.Delete(hamlFile);
 
                     }
 
 
                 }
-
-
-
-
-
+                else
+                {
+                    log("Problem with the HAML, skipping over");
+                    var erb = json["error"].ToString();
+                    log(erb);
+                }
 
             }
 
         }
+        private static void log(string text)
+        {
+            Console.WriteLine(text);
+            File.AppendAllText(logfilepath, text + "\n");
+           
+
+        }
+
     }
+
+
+
 }
