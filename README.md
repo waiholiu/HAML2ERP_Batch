@@ -10,7 +10,7 @@ Compile the app by using dotnet run
 
 Go into bin/debug/dotnetcore3.1
 
-Run  .\HAML2ERP_Batch.exe <directory of the project you want to convert>
+Run  .\HAML2ERP_Batch.exe [directory of the project you want to convert]
 
 
 
